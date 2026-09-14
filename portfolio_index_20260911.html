@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giovanni Shathaia</title>
+<meta name="description" content="Business Central administrator. AL extension development, multi-entity environments, Binary Stream MEM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3F5F7;
+    --surface: #FFFFFF;
+    --text: #1A222C;
+    --muted: #5C6773;
+    --accent: #235D6E;
+    --border: #D5DBE1;
+    --code-comment: #6B7785;
+    --code-keyword: #235D6E;
+    --code-string: #7A4A1E;
+    --code-attr: #4A5B6B;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 72px 24px 96px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3 {
+    font-weight: 500;
+    line-height: 1.25;
+    margin: 0;
+  }
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; margin-top: 64px; margin-bottom: 20px; }
+  h3 { font-size: 18px; margin-top: 36px; margin-bottom: 10px; }
+
+  p { margin: 0 0 18px; }
+  p:last-child { margin-bottom: 0; }
+
+  .role {
+    color: var(--muted);
+    margin: 6px 0 40px;
+    font-size: 17px;
+  }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin: 0 0 20px;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+    tab-size: 4;
+  }
+  pre code { font-family: inherit; }
+
+  code:not(pre code) {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  .c  { color: var(--code-comment); font-style: italic; }
+  .k  { color: var(--code-keyword); font-weight: 500; }
+  .s  { color: var(--code-string); }
+  .a  { color: var(--code-attr); }
+
+  .hero-note {
+    font-size: 17px;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .findings { list-style: none; padding: 0; margin: 0; }
+  .findings li {
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+  }
+  .findings li:last-child { border-bottom: 1px solid var(--border); }
+  .findings strong { font-weight: 500; display: block; margin-bottom: 4px; }
+  .findings p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 15px;
+    margin: 0 0 20px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { font-weight: 500; color: var(--muted); }
+  td code { white-space: nowrap; }
+
+  .footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .footer p { margin: 0 0 6px; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    main { padding: 48px 18px 72px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; margin-top: 52px; }
+    pre { font-size: 12.5px; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Giovanni Shathaia</h1>
+  <p class="role">Business Central administrator. Multi-entity environments, Binary Stream MEM, AL extension development.</p>
+
+<pre><code><span class="c">// Subscribes to the standard approval entry creation event. If the assigned
+// approver has an active delegation for today, the entry is redirected to
+// their substitute before it is written. Every swap is logged.</span>
+
+<span class="a">[EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.",
+  'OnBeforeApprovalEntryInsert', '', false, false)]</span>
+<span class="k">local procedure</span> OnBeforeApprovalEntryInsert_SwapForVacationDelegation(
+    <span class="k">var</span> ApprovalEntry: <span class="k">Record</span> <span class="s">"Approval Entry"</span>; ...)
+<span class="k">begin</span>
+    <span class="k">if</span> ApprovalEntry.<span class="s">"Approver ID"</span> = <span class="s">''</span> <span class="k">then</span>
+        <span class="k">exit</span>;
+
+    OriginalApproverID := ApprovalEntry.<span class="s">"Approver ID"</span>;
+
+    <span class="c">// Today(), not WorkDate(). Being on leave is a calendar fact, and a
+    // user's work date is often set back a period during month-end close.</span>
+    <span class="k">if not</span> DelegationSetup.TryGetActiveSubstituteWithDetails(
+        OriginalApproverID, Today(), SubstituteID,
+        DelegationEntryNo, HopsFollowed) <span class="k">then</span>
+        <span class="k">exit</span>;
+
+    ApprovalEntry.<span class="s">"Approver ID"</span> := SubstituteID;
+
+    <span class="c">// Logged in the same transaction as the approval entry, so the log can
+    // never claim a redirect that rolled back, or miss one that committed.</span>
+    DelegationLog.LogApprovalRedirect(
+        ApprovalEntry, OriginalApproverID, SubstituteID,
+        DelegationEntryNo, HopsFollowed);
+<span class="k">end</span>;</code></pre>
+
+  <p class="hero-note">Business Central has no way to say "I'm out until the 20th, send my approvals to someone else." This subscriber adds one.</p>
+  <p class="hero-sub">Deployed in production across a 100-plus entity environment. <a href="#vacation-delegation">Full writeup below</a>, or <a href="https://github.com/gio437/vacation-delegation-bc">source on GitHub</a>.</p>
+
+
+  <h2 id="vacation-delegation">Vacation Delegation for Business Central</h2>
+
+  <p>When an approver goes on vacation, Business Central keeps routing approvals to them. Documents sit in the queue until they return, or an administrator reassigns each one by hand, or someone with SUPER rights approves it themselves. That last one is an internal controls problem, not just an inconvenience.</p>
+
+  <p>This extension lets a user register a substitute for a date range. Approval entries created for them during that range are redirected before they're written, and every redirection is logged with enough detail to answer an audit question.</p>
+
+  <h3>Today() rather than WorkDate()</h3>
+
+  <p>Business Central convention is to use <code>WorkDate()</code>. This extension deliberately doesn't.</p>
+
+  <p>During month-end close, finance users set their work date back into the prior period to post adjusting entries. If delegation keyed off <code>WorkDate()</code>, an approver working December's close in mid-January would have their January vacation evaluated against a December date, and the redirect would silently not fire.</p>
+
+  <p>Whether someone is on leave is a real-world calendar fact. It's not a posting-period question.</p>
+
+  <h3>Delegation chains, with a cycle guard</h3>
+
+  <p>If A delegates to B, and B is also out and has delegated to C, approvals for A should land on C. The resolver walks the chain, tracking visited users. If it encounters someone already visited, it stops and keeps the last resolvable substitute rather than looping. A hop limit of 10 is the second backstop.</p>
+
+<pre><code><span class="k">while</span> KeepResolving <span class="k">and</span> (HopsFollowed &lt; MaxDelegationHops()) <span class="k">do</span>
+    <span class="k">if not</span> FindDirectSubstitute(CurrentUserID, ADate,
+                                NextUserID, StepEntryNo) <span class="k">then</span>
+        KeepResolving := <span class="k">false</span>
+    <span class="k">else</span>
+        <span class="c">// Revisiting someone means a cycle (A to B to A). Stop and keep
+        // whoever we last resolved to rather than looping forever.</span>
+        <span class="k">if</span> VisitedUsers.Contains(NextUserID) <span class="k">then</span>
+            KeepResolving := <span class="k">false</span>
+        <span class="k">else begin</span>
+            <span class="k">if</span> DelegationEntryNo = 0 <span class="k">then</span>
+                DelegationEntryNo := StepEntryNo;
+            HopsFollowed += 1;
+            VisitedUsers.Add(NextUserID);
+            CurrentUserID := NextUserID;
+        <span class="k">end</span>;</code></pre>
+
+  <p>The logged delegation entry is the first one in the chain, belonging to the original approver, because that's the entry that authorised diverting the approval away from them.</p>
+
+  <h3>An empty control list blocks, it doesn't allow</h3>
+
+  <p>Only users on an explicit approved list can be named as an approver or substitute. If that list is empty, the extension errors rather than letting anyone through.</p>
+
+<pre><code><span class="k">if</span> Approver.ListIsEmpty() <span class="k">then</span>
+    <span class="k">Error</span>(<span class="s">'No approved delegation users are set up. ' +
+          'An administrator must populate the Approved Delegation Users ' +
+          'page before delegations can be created.'</span>);</code></pre>
+
+  <p>The failure mode of a control list that fails to load should never be "no control." A misconfiguration stops work. It doesn't silently widen who can hold approval authority.</p>
+
+  <h3>Partial rows can never redirect anything</h3>
+
+  <p>Business Central inserts a list-page row as soon as the first field is filled in. Erroring on a not-yet-entered field would make in-grid entry impossible.</p>
+
+  <p>So validation is tolerant of blank fields on write, and a row only counts as active once every field is populated:</p>
+
+<pre><code><span class="k">procedure</span> IsActiveOnDate(ADate: <span class="k">Date</span>): <span class="k">Boolean</span>
+<span class="k">begin</span>
+    <span class="k">exit</span>((<span class="s">"Start Date"</span> &lt;&gt; 0D) <span class="k">and</span>
+         (<span class="s">"End Date"</span> &lt;&gt; 0D) <span class="k">and</span>
+         (<span class="s">"Substitute User ID"</span> &lt;&gt; <span class="s">''</span>) <span class="k">and</span>
+         (ADate &gt;= <span class="s">"Start Date"</span>) <span class="k">and</span>
+         (ADate &lt;= <span class="s">"End Date"</span>));
+<span class="k">end</span>;</code></pre>
+
+  <p>A half-entered row is simply never active, so it can't blank out an approval entry's approver.</p>
+
+  <h3>Two different authority levels</h3>
+
+  <p>The delegation table is self-service. You can manage delegations for your own approvals, and SUPER can act for anyone.</p>
+
+  <p>The approved-user list has no self-service case. Every write requires SUPER, and it's deliberately not exposed through the <code>LOCAL</code> permission set the rest of the feature rides on. That list decides who may hold delegated authority at all, which is a different question from who may use it.</p>
+
+  <h3>The audit log is append-only, and says so honestly</h3>
+
+  <p>The permission set grants Read and Insert on the log table, not Read, Insert, Modify, Delete. No object in the extension modifies or deletes a log row.</p>
+
+  <p>The code comment doesn't overclaim: a SUPER user can still delete rows directly, because Business Central has no truly immutable storage. If the trail needs to stand up to an external audit, this is meant to be paired with the native Change Log on that table, or exported to an external archive on a schedule.</p>
+
+  <p>Every redirect records the original approver, the substitute, how many hops were followed, which delegation authorised it, the document type and number, the amount, the requester, and the RecordId. The question an auditor asks is "who approved this instead of the person the workflow chose, and on what authority." The log answers both halves.</p>
+
+  <h3>Populating the list without typing every name by hand</h3>
+
+  <p>The control list can be built manually, one user at a time, but most of who should be on it is already sitting in Business Central's own approval configuration. A button on the approvers page runs <code>PopulateFromApprovalSetup()</code>, which pulls in anyone named as another user's Approver ID in User Setup, anyone carrying an approval limit or an unlimited-approval flag, and every member of a Workflow User Group.</p>
+
+  <p>It's a manual trigger, not a background sync. Someone presses the button when they want the list refreshed against current approval setup. It's also purely additive: it only adds users who aren't already on the list, so an admin who deliberately removed someone won't have them silently reappear the next time it runs.</p>
+
+  <h3>Install and upgrade</h3>
+
+  <p>Version 1 carried a hardcoded approver list. Version 2 moved it into a table. That creates a hazard: a tenant upgrading from 1 to 2 would land with an empty control list, and since empty blocks all writes, every delegation would break until an admin populated the page by hand.</p>
+
+  <p>Both an Install codeunit and an Upgrade codeunit seed the list, because upgrading fires <code>OnUpgradePerCompany</code>, not the install trigger. The seed only runs when the table is completely empty, so it can never overwrite a curated list.</p>
+
+  <h3>What I'd do differently</h3>
+
+  <p>The <code>Currently Active</code> flag is recalculated on write, not continuously. A delegation whose end date passes while nobody touches the record shows a stale flag until the next modify. Redirect behaviour is unaffected, since active-date logic evaluates live, but the display lags. A nightly job queue entry would fix it.</p>
+
+  <p><code>ReassignOpenApprovalEntries()</code> exists for entries created before a delegation was set up, or by batch jobs that don't fire the standard event. It's written but not surfaced on a page or scheduled.</p>
+
+  <p>There's no automated test suite. Testing was manual in a sandbox: create a delegation, submit a document, verify the entry lands on the substitute and the log row is written. Then chain cases, cycle cases, partial rows, expired ranges. The right answer is a test codeunit against the approval workflow test libraries, and that's the gap.</p>
+
+  <table>
+    <thead><tr><th>Object</th><th>ID</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Vacation Delegation Setup</td><td><code>50150</code></td><td>Delegation records with date ranges and validation</td></tr>
+      <tr><td>Vacation Delegation Approver</td><td><code>50151</code></td><td>Control list of who may hold delegated authority</td></tr>
+      <tr><td>Vacation Delegation Log</td><td><code>50152</code></td><td>Append-only audit trail</td></tr>
+      <tr><td>Vacation Delegation Mgmt</td><td><code>50150</code></td><td>Event subscriber and manual reassignment helper</td></tr>
+      <tr><td>Install and Upgrade codeunits</td><td><code>50151</code>, <code>50152</code></td><td>Seed the control list on fresh install and on 1 to 2 upgrade</td></tr>
+      <tr><td>Vacation Delegation Local Ext</td><td><code>50151</code></td><td>Extends LOCAL. Log is Read and Insert only</td></tr>
+    </tbody>
+  </table>
+
+  <p class="hero-sub">Runtime 13.0, Business Central 24.0 and above. <a href="https://github.com/gio437/vacation-delegation-bc">Source on GitHub</a>.</p>
+
+
+  <h2>Findings from production</h2>
+
+  <p>Most of what I do is finding where documented behaviour and actual behaviour diverge, usually because an extension or a batch process is overriding base Business Central. These are things I traced that weren't documented anywhere.</p>
+
+  <ul class="findings">
+    <li>
+      <strong>Fixed asset depreciation ignoring dimension priorities</strong>
+      <p>Configured Default Dimension Priorities for the FAGLJNL source code with G/L Account first and Fixed Asset second, so balance sheet lines would hold at the clearing department while P&amp;L lines inherited the asset's operating department. It didn't work. The FA Posting Groups Allocation table had a department hardcoded, and it intercepts the batch before the dimension priority engine runs. Priorities were correct the whole time and never got a chance to execute.</p>
+    </li>
+    <li>
+      <strong>Multi-entity payment routine ignoring native On Hold</strong>
+      <p>Invoices marked On Hold in the vendor ledger were still being pulled into payment batches. Native Suggest Vendor Payments respects the flag. The multi-entity extension's equivalent routine doesn't read it. Confirmed on fresh invoices with no applied entries, escalated to the vendor as a defect.</p>
+    </li>
+    <li>
+      <strong>Version 27 upgrade impacts, traced after the fact</strong>
+      <p>Permission enforcement tightened and users lost access to tables that had previously been implicitly granted. The IRS 1099 single-code field was replaced with three fields. Source Currency Amount in G/L Entries started populating for local-currency transactions. Report timestamps stopped adjusting for daylight saving. None of these were in the release notes as user-facing changes. All surfaced as tickets.</p>
+    </li>
+    <li>
+      <strong>Great Plains legacy conversion mapping</strong>
+      <p>Production GP to Business Central conversion was generating "not defined on Legacy G/L Conversion" errors for every new entity, division, and department combination, each needing a manual mapping row. Completed a project moving validation to default dimensions instead, which removed the recurring mapping work.</p>
+    </li>
+    <li>
+      <strong>Sandbox copies blocking every page after refresh</strong>
+      <p>Every Copy to Sandbox operation threw a runtime error on nearly all pages. The cause was Business Central's own sandbox safety behaviour: outbound HTTP is blocked per extension by default, and the multi-entity extension calls a licensing endpoint on page load. The fix is a per-extension setting, not a re-copy. Documented as an SOP so the next refresh doesn't repeat the investigation.</p>
+    </li>
+  </ul>
+
+
+  <div class="footer">
+    <p><a href="mailto:giomail33@gmail.com">giomail33@gmail.com</a></p>
+    <p><a href="https://github.com/gio437">github.com/gio437</a></p>
+    <p><a href="Giovanni_Shathaia_Resume.pdf">Resume</a></p>
+  </div>
+
+</main>
+</body>
+</html>
