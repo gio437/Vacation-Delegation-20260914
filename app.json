@@ -1,0 +1,29 @@
+{
+  "id": "b3f1a2c4-7e5d-4a1b-9c3f-1d2e3f4a5b6c",
+  "name": "Vacation Delegation",
+  "publisher": "Giovanni Shathaia",
+  "version": "2.0.0.2",
+  "brief": "Auto-substitute approvers during a defined vacation date range.",
+  "description": "Lets a user set up a substitute approver for a date range. Approval Entries created for that user during the range are automatically routed to the substitute instead.",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "24.0.0.0",
+  "application": "24.0.0.0",
+  "idRanges": [
+    {
+      "from": 50150,
+      "to": 50199
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "13.0"
+}
