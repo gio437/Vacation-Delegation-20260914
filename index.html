@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giovanni Shathaia</title>
+<meta name="description" content="Business Central administrator. AL extension development, multi-entity environments, Binary Stream MEM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3F5F7;
+    --surface: #FFFFFF;
+    --text: #1A222C;
+    --muted: #5C6773;
+    --accent: #235D6E;
+    --border: #D5DBE1;
+    --code-comment: #6B7785;
+    --code-keyword: #235D6E;
+    --code-string: #7A4A1E;
+    --code-attr: #4A5B6B;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 72px 24px 96px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3 {
+    font-weight: 500;
+    line-height: 1.25;
+    margin: 0;
+  }
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; margin-top: 64px; margin-bottom: 20px; }
+  h3 { font-size: 18px; margin-top: 36px; margin-bottom: 10px; }
+
+  p { margin: 0 0 18px; }
+  p:last-child { margin-bottom: 0; }
+
+  .role {
+    color: var(--muted);
+    margin: 6px 0 40px;
+    font-size: 17px;
+  }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin: 0 0 20px;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+    tab-size: 4;
+  }
+  pre code { font-family: inherit; }
+
+  code:not(pre code) {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  .c  { color: var(--code-comment); font-style: italic; }
+  .k  { color: var(--code-keyword); font-weight: 500; }
+  .s  { color: var(--code-string); }
+  .a  { color: var(--code-attr); }
+
+  .hero-note {
+    font-size: 17px;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .findings { list-style: none; padding: 0; margin: 0; }
+  .findings li {
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+  }
+  .findings li:last-child { border-bottom: 1px solid var(--border); }
+  .findings strong { font-weight: 500; display: block; margin-bottom: 4px; }
+  .findings p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 15px;
+    margin: 0 0 20px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { font-weight: 500; color: var(--muted); }
+  td code { white-space: nowrap; }
+
+  .footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .footer p { margin: 0 0 6px; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    main { padding: 48px 18px 72px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; margin-top: 52px; }
+    pre { font-size: 12.5px; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Giovanni Shathaia</h1>
+  <p class="role">Business Central administrator. Multi-entity environments, Binary Stream MEM, AL extension development.</p>
+
+<pre><code><span class="c">// Subscribes to the standard approval entry creation event. If the assigned
+// approver has an active delegation for today, and the substitute is approved
+// in this company, the entry is redirected before it is written. Every swap,
+// and every swap refused, is logged.</span>
+
+<span class="a">[EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.",
+  'OnBeforeApprovalEntryInsert', '', false, false)]</span>
+<span class="k">local procedure</span> OnBeforeApprovalEntryInsert_SwapForVacationDelegation(
+    <span class="k">var</span> ApprovalEntry: <span class="k">Record</span> <span class="s">"Approval Entry"</span>; ...)
+<span class="k">begin</span>
+    <span class="k">if</span> ApprovalEntry.<span class="s">"Approver ID"</span> = <span class="s">''</span> <span class="k">then</span>
+        <span class="k">exit</span>;
+
+    <span class="c">// Already auto-approved (the approver is the submitter): leave it alone.</span>
+    <span class="k">if</span> ApprovalEntry.Status = ApprovalEntry.Status::Approved <span class="k">then</span>
+        <span class="k">exit</span>;
+
+    OriginalApproverID := ApprovalEntry.<span class="s">"Approver ID"</span>;
+
+    <span class="c">// Resolves the substitute as of Today(), not WorkDate(), then confirms
+    // they may approve in THIS company. If not, the approval stays put and
+    // a Redirect Skipped entry records why.</span>
+    <span class="k">if not</span> TryResolveSubstituteForThisCompany(ApprovalEntry,
+        OriginalApproverID, SubstituteID,
+        DelegationNo, HopsFollowed) <span class="k">then</span>
+        <span class="k">exit</span>;
+
+    ApprovalEntry.<span class="s">"Approver ID"</span> := SubstituteID;
+
+    <span class="c">// Logged in the same transaction as the approval entry, so the log can
+    // never claim a redirect that rolled back, or miss one that committed.</span>
+    DelegationLog.LogApprovalRedirect(
+        ApprovalEntry, OriginalApproverID, SubstituteID,
+        DelegationNo, HopsFollowed);
+<span class="k">end</span>;</code></pre>
+
+  <p class="hero-note">Business Central has no way to say "I'm out until the 20th, send my approvals to someone else." This subscriber adds one.</p>
+  <p class="hero-sub">Deployed in production across a 100-plus entity environment. <a href="#vacation-delegation">Full writeup below</a>, and <a href="mailto:giomail33@gmail.com?subject=Source%20request%3A%20Vacation%20Delegation">source available on request</a>. Also below: <a href="#vendor-bank-approval">approval for vendor bank account changes</a>.</p>
+
+
+  <h2 id="vacation-delegation">Vacation Delegation for Business Central</h2>
+
+  <p>When an approver goes on vacation, Business Central keeps routing approvals to them. Documents sit in the queue until they return, or an administrator reassigns each one by hand, or someone with SUPER rights approves it themselves. That last one is an internal controls problem, not just an inconvenience.</p>
+
+  <p>This extension lets a user register a substitute for a date range. Approval entries created for them during that range are redirected before they're written, and every redirection is logged with enough detail to answer an audit question.</p>
+
+  <h3>Today() rather than WorkDate()</h3>
+
+  <p>Business Central convention is to use <code>WorkDate()</code>. This extension deliberately doesn't.</p>
+
+  <p>During month-end close, finance users set their work date back into the prior period to post adjusting entries. If delegation keyed off <code>WorkDate()</code>, an approver working December's close in mid-January would have their January vacation evaluated against a December date, and the redirect would silently not fire.</p>
+
+  <p>Whether someone is on leave is a real-world calendar fact. It's not a posting-period question.</p>
+
+  <h3>Delegation chains, with a cycle guard</h3>
+
+  <p>If A delegates to B, and B is also out and has delegated to C, approvals for A should land on C. The resolver walks the chain, tracking visited users. If it encounters someone already visited, it stops and keeps the last resolvable substitute rather than looping. A hop limit of 10 is the second backstop.</p>
+
+<pre><code><span class="k">while</span> KeepResolving <span class="k">and</span> (HopsFollowed &lt; MaxDelegationHops()) <span class="k">do</span>
+    <span class="k">if not</span> FindDirectSubstitute(CurrentUserID, ADate, ForCompanyName,
+                                NextUserID, StepEntryNo) <span class="k">then</span>
+        KeepResolving := <span class="k">false</span>
+    <span class="k">else</span>
+        <span class="c">// Revisiting someone means a cycle (A to B to A). Stop and keep
+        // whoever we last resolved to rather than looping forever.</span>
+        <span class="k">if</span> VisitedUsers.Contains(NextUserID) <span class="k">then</span>
+            KeepResolving := <span class="k">false</span>
+        <span class="k">else begin</span>
+            <span class="k">if</span> DelegationEntryNo = 0 <span class="k">then</span>
+                DelegationEntryNo := StepEntryNo;
+            HopsFollowed += 1;
+            VisitedUsers.Add(NextUserID);
+            CurrentUserID := NextUserID;
+        <span class="k">end</span>;</code></pre>
+
+  <p>The logged delegation entry is the first one in the chain, belonging to the original approver, because that's the entry that authorised diverting the approval away from them.</p>
+
+  <h3>An empty control list blocks, it doesn't allow</h3>
+
+  <p>Only users on an explicit approved list can be named as an approver or substitute. If that list is empty, the extension errors rather than letting anyone through.</p>
+
+<pre><code><span class="k">if</span> Approver.ListIsEmptyInCompany(CompanyToCheck) <span class="k">then</span>
+    <span class="k">Error</span>(<span class="s">'No approved delegation users are set up in company %1. ' +
+          'An administrator must populate the Approved Delegation Users ' +
+          'page there before delegations can be created.'</span>, CompanyToCheck);</code></pre>
+
+  <p>The failure mode of a control list that fails to load should never be "no control." A misconfiguration stops work. It doesn't silently widen who can hold approval authority.</p>
+
+  <h3>Partial rows can never redirect anything</h3>
+
+  <p>Validation is tolerant of blank fields on write, so a field can be cleared and retyped, and a row only counts as active once every field is populated:</p>
+
+<pre><code><span class="k">procedure</span> IsActiveOnDate(ADate: <span class="k">Date</span>): <span class="k">Boolean</span>
+<span class="k">begin</span>
+    <span class="k">exit</span>((<span class="s">"Start Date"</span> &lt;&gt; 0D) <span class="k">and</span>
+         (<span class="s">"End Date"</span> &lt;&gt; 0D) <span class="k">and</span>
+         (<span class="s">"Substitute User ID"</span> &lt;&gt; <span class="s">''</span>) <span class="k">and</span>
+         (ADate &gt;= <span class="s">"Start Date"</span>) <span class="k">and</span>
+         (ADate &lt;= <span class="s">"End Date"</span>));
+<span class="k">end</span>;</code></pre>
+
+  <p>A half-entered row is simply never active, so it can't blank out an approval entry's approver.</p>
+
+  <p>The pages also insert a new delegation once, when the user leaves the row, rather than as soon as the first field is filled in. Without that, every following field was a separate save, and for an all-companies delegation each one wrote a log entry into every company. A save that changes nothing isn't logged at all.</p>
+
+  <h3>No one approves their own request</h3>
+
+  <p>A delegation mustn't become a way round segregation of duties. If the substitute it resolves to is the person who submitted the document, the redirect is refused: the approval stays with the original approver and the log records why.</p>
+
+<pre><code><span class="k">if</span> (SenderID &lt;&gt; <span class="s">''</span>) <span class="k">and</span> (SubstituteID = SenderID) <span class="k">then begin</span>
+    SkipReason := StrSubstNo(IsSenderLbl, SubstituteID);
+    <span class="k">exit</span>(<span class="k">false</span>);
+<span class="k">end</span>;</code></pre>
+
+  <p>The mirror case matters too. When the approver Business Central picks is the submitter, it creates the entry already approved. The subscriber leaves those alone, because putting the substitute's name on them would record someone approving a document they never saw.</p>
+
+  <h3>Two different authority levels</h3>
+
+  <p>The delegation table is self-service. You can manage delegations for your own approvals, and SUPER can act for anyone.</p>
+
+  <p>The approved-user list has no self-service case. Every write requires SUPER, and it's deliberately not exposed through the <code>LOCAL</code> permission set the rest of the feature rides on. That list decides who may hold delegated authority at all, which is a different question from who may use it. Changing the user on an existing row is a rename, which skips the normal modify checks, so renames are refused: replacing someone has to show in the log as one user removed and another added.</p>
+
+  <h3>One delegation, every company, but each company still decides</h3>
+
+  <p>Through version 2.0 a delegation was per company. An approver who approves in several entities had to enter the same delegation in each one, and missing one meant approvals quietly stalled there. Version 2.1 moves delegations into a single cross-company table. A delegation applies to all companies by default, or to one named company.</p>
+
+  <p>The risk is that a delegation entered in one legal entity could now hand approval authority to someone in another. So the approved-user list stays per company, and it's enforced at redirect time, in the company where the approval is actually being created:</p>
+
+<pre><code><span class="k">if not</span> SubstituteMayApproveInThisCompany(SubstituteID, SkipReason) <span class="k">then begin</span>
+    DelegationLog.LogRedirectSkipped(ApprovalEntry, OriginalApproverID,
+        SubstituteID, DelegationNo, HopsFollowed, SkipReason);
+    <span class="k">exit</span>(<span class="k">false</span>);
+<span class="k">end</span>;</code></pre>
+
+  <p>If the substitute isn't on that company's list, is blocked there, or has no User Setup there, nothing is swapped. The approval stays with the original approver and the log records why. The approval request itself is never blocked.</p>
+
+  <p>Editing someone else's delegation that reaches outside the current company requires SUPER assigned for all companies. SUPER in one company shouldn't be able to reroute another company's approvals. And because the subscriber runs as whoever submitted the document, who may not hold <code>LOCAL</code> in that company, the reads and log inserts on the redirect path carry inherent permissions. A permission error there would block their approval request outright.</p>
+
+  <h3>The audit log is append-only, and says so honestly</h3>
+
+  <p>The permission set grants Read and Insert on the log table, not Read, Insert, Modify, Delete. No object in the extension modifies or deletes a log row.</p>
+
+  <p>The code comment doesn't overclaim: a SUPER user can still delete rows directly, because Business Central has no truly immutable storage. If the trail needs to stand up to an external audit, this is meant to be paired with the native Change Log on that table, or exported to an external archive on a schedule.</p>
+
+  <p>Changing a delegation is logged in every company its old scope covered as well as its new one, so narrowing an all-companies delegation to one company shows up in the companies it leaves.</p>
+
+  <p>Every redirect records the original approver, the substitute, how many hops were followed, which delegation authorised it, the document type and number, the amount, the requester, and the RecordId. The question an auditor asks is "who approved this instead of the person the workflow chose, and on what authority." The log answers both halves.</p>
+
+  <h3>Populating the list without typing every name by hand</h3>
+
+  <p>The control list can be built manually, one user at a time, but most of who should be on it is already sitting in Business Central's own approval configuration. A button on the approvers page runs <code>PopulateFromApprovalSetup()</code>, which pulls in anyone named as another user's Approver ID in User Setup, anyone carrying an approval limit or an unlimited-approval flag, and every member of a Workflow User Group.</p>
+
+  <p>It's a manual trigger, not a background sync. Someone presses the button when they want the list refreshed against current approval setup. It's also purely additive: it only adds users who aren't already on the list, so an admin who deliberately removed someone won't have them silently reappear the next time it runs.</p>
+
+  <h3>Install and upgrade</h3>
+
+  <p>Version 1 carried a hardcoded approver list. Version 2 moved it into a table. That creates a hazard: a tenant upgrading from 1 to 2 would land with an empty control list, and since empty blocks all writes, every delegation would break until an admin populated the page by hand.</p>
+
+  <p>Both an Install codeunit and an Upgrade codeunit seed the list, because upgrading fires <code>OnUpgradePerCompany</code>, not the install trigger. The seed only runs when the table is completely empty, so it can never overwrite a curated list.</p>
+
+  <p>Version 2.1 had a harder version of the same problem. Business Central won't switch an installed table from per-company to cross-company, so 2.1 adds a new table and migrates into it. Each company's rows are copied across as single-company delegations naming that company, so routing is exactly what it was before the upgrade, and nothing becomes cross-company until someone chooses it. Every move is logged, the migration is guarded by an upgrade tag so it's safe to re-run, and the old table is kept read-only so the move can be checked row for row.</p>
+
+  <h3>What I'd do differently</h3>
+
+  <p>The substitute's own approval limits aren't re-checked. Business Central picks an approver who is authorised for the amount, and this extension swaps the approver after that decision, so a substitute can receive an approval above their limit. Across companies their limits can differ too. The log records the amount, the requester and both approvers on every redirect, so it's detectable after the fact, but detection isn't prevention. Closing it is a controls decision as much as a code change, and it's documented as open rather than quietly left out.</p>
+
+  <p><code>ReassignOpenApprovalEntries()</code> exists for entries created before a delegation was set up, or by batch jobs that don't fire the standard event. It's written but not surfaced on a page or scheduled.</p>
+
+  <p>There's no automated test suite. Testing was manual in a sandbox: create a delegation, submit a document, verify the entry lands on the substitute and the log row is written. Then chain cases, cycle cases, partial rows, expired ranges. The right answer is a test codeunit against the approval workflow test libraries, and that's the gap.</p>
+
+  <table>
+    <thead><tr><th>Object</th><th>ID</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Vacation Delegation</td><td><code>50153</code></td><td>Cross-company delegation records with date ranges, scope and validation</td></tr>
+      <tr><td>Vacation Delegation Setup</td><td><code>50150</code></td><td>Legacy per-company table, kept read-only after the 2.1 migration</td></tr>
+      <tr><td>Vacation Delegation Approver</td><td><code>50151</code></td><td>Per-company control list of who may hold delegated authority</td></tr>
+      <tr><td>Vacation Delegation Log</td><td><code>50152</code></td><td>Append-only audit trail, per company</td></tr>
+      <tr><td>Vacation Delegation Mgmt</td><td><code>50150</code></td><td>Event subscriber, per-company approval check and manual reassignment helper</td></tr>
+      <tr><td>Install and Upgrade codeunits</td><td><code>50151</code>, <code>50152</code></td><td>Seed the control list, and migrate delegations to the cross-company table</td></tr>
+      <tr><td>Vacation Delegation Local Ext</td><td><code>50151</code></td><td>Extends LOCAL. Log is Read and Insert only</td></tr>
+    </tbody>
+  </table>
+
+  <p class="hero-sub">Runtime 13.0, Business Central 24.0 and above. <a href="mailto:giomail33@gmail.com?subject=Source%20request%3A%20Vacation%20Delegation">Source available on request</a>.</p>
+
+
+  <h2 id="vendor-bank-approval">Vendor Bank Account Approval for Business Central</h2>
+
+  <p>Changing a vendor's bank details is the classic payment-fraud move: one edit, and the next payment run sends real money to a new account. Business Central has approval workflows for vendors, customers and items, but nothing for the Vendor Bank Account table, so anyone who can edit the card can redirect payments.</p>
+
+  <p>This extension registers "A vendor bank account was changed" as a native workflow event and ships a ready-made workflow template, so approval is configured on the standard Workflows page rather than in custom code.</p>
+
+  <h3>Hold until approved, not just flag</h3>
+
+  <p>A status field that says "pending" while the new account number is already live isn't a control. The template uses Business Central's own Revert, Apply and Discard responses: the new value is stashed, the old one is put back, and it only goes live once the last approver signs off. Rejected changes are thrown away. Eight fields are protected, everything that decides where a payment goes: bank account number, IBAN, SWIFT, routing (transit) number, branch number, clearing code and standard, and the electronic payments flag.</p>
+
+  <h3>It fails closed</h3>
+
+  <p>If no enabled workflow picks a change up, the change is refused rather than saved silently. That's controlled by a Require Approval switch, on by default and gated behind its own permission set. Checking whether an approval request exists isn't enough, since a stale one from earlier would answer yes. So the subscriber counts what's held for approval before raising the event and again after, and refuses the save unless this change produced something new:</p>
+
+<pre><code>CapturedBefore := CountCapturedForApproval(Rec);
+
+RecVariant := Rec;
+WorkflowManagement.HandleEventWithxRec(
+    RunWorkflowOnVBABankAccChangedCode(), RecVariant, StoredBefore);
+
+CapturedAfter := CountCapturedForApproval(Rec);
+
+<span class="k">if</span> CapturedAfter &lt;= CapturedBefore <span class="k">then</span>
+    <span class="k">if</span> VBABankApprovalSetup.IsApprovalRequired() <span class="k">then</span>
+        <span class="k">Error</span>(ApprovalRequiredErr);</code></pre>
+
+  <p>New bank accounts go through the same path. Otherwise the obvious workaround is to delete the approved account and recreate it with different details, and nothing was ever "changed".</p>
+
+  <h3>xRec can't be trusted</h3>
+
+  <p>Before version 3.6.2, the subscriber compared <code>Rec</code> with <code>xRec</code> in <code>OnAfterModifyEvent</code>. That works for edits made on a page. For a modify made from AL code, such as an import, another extension or the extension's own dialog, <code>xRec</code> already holds the new values, so the change is invisible and never goes for approval. The fix reads the stored record from the database in <code>OnBeforeModifyEvent</code>, while it still holds the old values, and compares against that. It was found because the dialog runs its own independent fail-closed check, which refused the save.</p>
+
+  <h3>One bank change, one approval</h3>
+
+  <p>Business Central saves each field as you leave it. Editing the protected fields directly would raise a request on the first field and split one bank change across several approvals, with the record pairing a new account number with the old routing number in between. So the fields are read-only on the card, and a Change Bank Details dialog collects every new value and saves once. The approver sees each held change, old value to new, in Requests to Approve.</p>
+
+  <h3>A second person, always</h3>
+
+  <p>Business Central lets you approve your own request in two ways. If you're set up as your own approver, it creates the entry already approved, and an approval administrator can approve a request they sent themselves. For a change to where payments go, both are refused, and the error rolls the whole change back. An administrator can allow self-approval for single-user testing; it's off by default, including on setups that existed before the switch did.</p>
+
+<pre><code><span class="k">if</span> Rec.<span class="s">"Sender ID"</span> = Rec.<span class="s">"Approver ID"</span> <span class="k">then</span>
+    <span class="k">if not</span> VBABankApprovalSetup.IsSelfApprovalAllowed() <span class="k">then</span>
+        <span class="k">Error</span>(SelfApprovalErr, Rec.<span class="s">"Sender ID"</span>);</code></pre>
+
+  <h3>Closing the engine's own back door</h3>
+
+  <p>The subscriber has to let the workflow engine's own writes through: putting the old value back when a change is held, and writing the new one in once it's approved. It recognises them by matching the held old and new values. A review found that while a request was still open, any write that set a field to its proposed value looked exactly like the engine applying it, so the change went live early, and stayed live if the request was then rejected. Any other protected field changed in the same write went along with it.</p>
+
+  <p>Now a write only counts as the engine's when nothing is awaiting a decision, and only if every protected field it changed matches a held value.</p>
+
+  <h3>An audit trail that doesn't depend on the extension</h3>
+
+  <p>Installing or upgrading turns on Business Central's own Change Log for the protected fields, the approval status, and the vendor's preferred bank account. It only ever adds to existing Change Log settings. If the extension were ever removed or got round, the record of who changed which bank detail, from what to what, would still be there.</p>
+
+  <p>Deleting or renaming a bank account while a request is pending is refused too. Business Central tidies up requests when a vendor is deleted or renamed, but not a vendor bank account, so the request would be left stranded in the approver's queue.</p>
+
+  <h3>What it still doesn't do</h3>
+
+  <p>Nothing checks approval status at payment time. Deleting an approved account isn't blocked, and switching a vendor's preferred bank account to a different existing account needs no approval. Both now show up in the Change Log, but neither is gated, and they're documented as open rather than implied to be covered.</p>
+
+  <p class="hero-sub">Runtime 16.0, Business Central 27 and above. <a href="mailto:giomail33@gmail.com?subject=Source%20request%3A%20Vendor%20Bank%20Account%20Approval">Source available on request</a>.</p>
+
+
+  <h2>Findings from production</h2>
+
+  <p>Most of what I do is finding where documented behaviour and actual behaviour diverge, usually because an extension or a batch process is overriding base Business Central. These are things I traced that weren't documented anywhere.</p>
+
+  <ul class="findings">
+    <li>
+      <strong>Fixed asset depreciation ignoring dimension priorities</strong>
+      <p>Configured Default Dimension Priorities for the FAGLJNL source code with G/L Account first and Fixed Asset second, so balance sheet lines would hold at the clearing department while P&amp;L lines inherited the asset's operating department. It didn't work. The FA Posting Groups Allocation table had a department hardcoded, and it intercepts the batch before the dimension priority engine runs. Priorities were correct the whole time and never got a chance to execute.</p>
+    </li>
+    <li>
+      <strong>Multi-entity payment routine ignoring native On Hold</strong>
+      <p>Invoices marked On Hold in the vendor ledger were still being pulled into payment batches. Native Suggest Vendor Payments respects the flag. The multi-entity extension's equivalent routine doesn't read it. Confirmed on fresh invoices with no applied entries, escalated to the vendor as a defect.</p>
+    </li>
+    <li>
+      <strong>Version 27 upgrade impacts, traced after the fact</strong>
+      <p>Permission enforcement tightened and users lost access to tables that had previously been implicitly granted. The IRS 1099 single-code field was replaced with three fields. Source Currency Amount in G/L Entries started populating for local-currency transactions. Report timestamps stopped adjusting for daylight saving. None of these were in the release notes as user-facing changes. All surfaced as tickets.</p>
+    </li>
+    <li>
+      <strong>Great Plains legacy conversion mapping</strong>
+      <p>Production GP to Business Central conversion was generating "not defined on Legacy G/L Conversion" errors for every new entity, division, and department combination, each needing a manual mapping row. Completed a project moving validation to default dimensions instead, which removed the recurring mapping work.</p>
+    </li>
+    <li>
+      <strong>Sandbox copies blocking every page after refresh</strong>
+      <p>Every Copy to Sandbox operation threw a runtime error on nearly all pages. The cause was Business Central's own sandbox safety behaviour: outbound HTTP is blocked per extension by default, and the multi-entity extension calls a licensing endpoint on page load. The fix is a per-extension setting, not a re-copy. Documented as an SOP so the next refresh doesn't repeat the investigation.</p>
+    </li>
+  </ul>
+
+
+  <div class="footer">
+    <p><a href="mailto:giomail33@gmail.com">giomail33@gmail.com</a></p>
+    <p><a href="https://github.com/gio437">github.com/gio437</a></p>
+    <p><a href="Giovanni_Shathaia_Resume.pdf">Resume</a></p>
+    <p>&copy; 2026 Giovanni Shathaia. All rights reserved. Source code is shown for viewing only; no license to use it is granted.</p>
+  </div>
+
+</main>
+</body>
+</html>
