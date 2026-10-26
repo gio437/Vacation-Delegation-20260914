@@ -177,6 +177,13 @@
   <h1>Giovanni Shathaia</h1>
   <p class="role">Business Central administrator. Multi-entity environments, Binary Stream MEM, AL extension development.</p>
 
+  <figure class="demo">
+    <video controls muted playsinline preload="metadata" poster="vacation-delegation-demo-poster.jpg">
+      <source src="vacation-delegation-demo.mp4" type="video/mp4">
+    </video>
+    <figcaption>Vacation Delegation, an AL extension I built for Business Central: a delegation is set up, a journal is sent for approval, and the request goes to the substitute instead, with the redirect recorded in the log. Recorded in a test environment; names and company details are blurred.</figcaption>
+  </figure>
+
 <pre><code><span class="c">// Subscribes to the standard approval entry creation event. If the assigned
 // approver has an active delegation for today, and the substitute is approved
 // in this company, the entry is redirected before it is written. Every swap,
@@ -222,13 +229,6 @@
   <p>When an approver goes on vacation, Business Central keeps routing approvals to them. Documents sit in the queue until they return, or an administrator reassigns each one by hand, or someone with SUPER rights approves it themselves. That last one is an internal controls problem, not just an inconvenience.</p>
 
   <p>This extension lets a user register a substitute for a date range. Approval entries created for them during that range are redirected before they're written, and every redirection is logged with enough detail to answer an audit question.</p>
-
-  <figure class="demo">
-    <video controls muted playsinline preload="metadata" poster="vacation-delegation-demo-poster.jpg">
-      <source src="vacation-delegation-demo.mp4" type="video/mp4">
-    </video>
-    <figcaption>A delegation is set up, a journal is sent for approval, and the request goes to the substitute instead, with the redirect recorded in the log. Recorded in a test environment; names and company details are blurred.</figcaption>
-  </figure>
 
   <h3>Today() rather than WorkDate()</h3>
 
