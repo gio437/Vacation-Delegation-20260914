@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Giovanni Shathaia</title>
 <meta name="description" content="Business Central administrator. AL extension development, multi-entity environments, Binary Stream MEM.">
+<link rel="canonical" href="https://gio437.github.io/Vacation-Delegation-20260914/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Giovanni Shathaia">
+<meta property="og:description" content="Business Central administrator. AL extensions for vacation delegation of approvals and vendor bank account change approval.">
+<meta property="og:url" content="https://gio437.github.io/Vacation-Delegation-20260914/">
+<meta property="og:image" content="https://gio437.github.io/Vacation-Delegation-20260914/vacation-delegation-demo-poster.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Vacation Delegation Log in Business Central showing an approval redirected to the substitute">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -72,9 +82,21 @@
 
   .role {
     color: var(--muted);
-    margin: 6px 0 40px;
+    margin: 6px 0 8px;
     font-size: 17px;
   }
+  .links {
+    font-size: 15px;
+    margin: 0 0 24px;
+  }
+  .links .sep { color: var(--muted); margin: 0 6px; }
+
+  .summary {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .summary li { margin-bottom: 6px; }
+  .summary li:last-child { margin-bottom: 0; }
 
   pre {
     background: var(--surface);
@@ -176,6 +198,15 @@
 
   <h1>Giovanni Shathaia</h1>
   <p class="role">Business Central administrator. Multi-entity environments, Binary Stream MEM, AL extension development.</p>
+  <p class="links"><a href="Giovanni_Shathaia_Resume.pdf">Resume</a><span class="sep" aria-hidden="true">·</span><a href="https://www.linkedin.com/in/giovanni-shathaia-051781227/">LinkedIn</a><span class="sep" aria-hidden="true">·</span><a href="mailto:giomail33@gmail.com">Email</a></p>
+
+  <ul class="summary">
+    <li>Primary Business Central administrator for 100+ legal entities running Binary Stream MEM.</li>
+    <li>Built and deployed <a href="#vacation-delegation">Vacation Delegation</a>: while an approver is out, their approvals go to a substitute, and every redirect is logged.</li>
+    <li>Built <a href="#vendor-bank-approval">Vendor Bank Account Approval</a>: changes to where a vendor gets paid are held until a second person approves them.</li>
+    <li>Upgrade testing for v27 and v28, quarterly security and licensing audits, and the move from Great Plains legacy G/L mapping to default dimensions.</li>
+    <li>MB-800 certified: Dynamics 365 Business Central Functional Consultant Associate.</li>
+  </ul>
 
   <figure class="demo">
     <video controls muted playsinline preload="metadata" poster="vacation-delegation-demo-poster.jpg">
@@ -463,7 +494,7 @@ CapturedAfter := CountCapturedForApproval(Rec);
 
   <div class="footer">
     <p><a href="mailto:giomail33@gmail.com">giomail33@gmail.com</a></p>
-    <p><a href="https://github.com/gio437">github.com/gio437</a></p>
+    <p><a href="https://www.linkedin.com/in/giovanni-shathaia-051781227/">LinkedIn</a></p>
     <p><a href="Giovanni_Shathaia_Resume.pdf">Resume</a></p>
     <p>&copy; 2026 Giovanni Shathaia. All rights reserved. Code excerpts on this page are shown for viewing only; no license to use them is granted.</p>
   </div>
