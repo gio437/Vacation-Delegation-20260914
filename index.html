@@ -91,13 +91,6 @@
   }
   .links .sep { color: var(--muted); margin: 0 6px; }
 
-  .summary {
-    margin: 0;
-    padding-left: 20px;
-  }
-  .summary li { margin-bottom: 6px; }
-  .summary li:last-child { margin-bottom: 0; }
-
   pre {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -176,13 +169,12 @@
   }
 
   .footer {
-    margin-top: 72px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
+    margin-top: 48px;
     color: var(--muted);
     font-size: 15px;
   }
   .footer p { margin: 0 0 6px; }
+  .footer .links { margin-bottom: 10px; }
 
   @media (max-width: 600px) {
     body { font-size: 16px; }
@@ -199,14 +191,6 @@
   <h1>Giovanni Shathaia</h1>
   <p class="role">Business Central administrator. Multi-entity environments, Binary Stream MEM, AL extension development.</p>
   <p class="links"><a href="Giovanni_Shathaia_Resume.pdf">Resume</a><span class="sep" aria-hidden="true">·</span><a href="https://www.linkedin.com/in/giovanni-shathaia-051781227/">LinkedIn</a><span class="sep" aria-hidden="true">·</span><a href="mailto:giomail33@gmail.com">Email</a></p>
-
-  <ul class="summary">
-    <li>Primary Business Central administrator for 100+ legal entities running Binary Stream MEM.</li>
-    <li>Built and deployed <a href="#vacation-delegation">Vacation Delegation</a>: while an approver is out, their approvals go to a substitute, and every redirect is logged.</li>
-    <li>Built <a href="#vendor-bank-approval">Vendor Bank Account Approval</a>: changes to where a vendor gets paid are held until a second person approves them.</li>
-    <li>Upgrade testing for v27 and v28, quarterly security and licensing audits, and the move from Great Plains legacy G/L mapping to default dimensions.</li>
-    <li>MB-800 certified: Dynamics 365 Business Central Functional Consultant Associate.</li>
-  </ul>
 
   <figure class="demo">
     <video controls muted playsinline preload="metadata" poster="vacation-delegation-demo-poster.jpg">
@@ -493,9 +477,7 @@ CapturedAfter := CountCapturedForApproval(Rec);
 
 
   <div class="footer">
-    <p><a href="mailto:giomail33@gmail.com">giomail33@gmail.com</a></p>
-    <p><a href="https://www.linkedin.com/in/giovanni-shathaia-051781227/">LinkedIn</a></p>
-    <p><a href="Giovanni_Shathaia_Resume.pdf">Resume</a></p>
+    <p class="links"><a href="mailto:giomail33@gmail.com">giomail33@gmail.com</a><span class="sep" aria-hidden="true">·</span><a href="https://www.linkedin.com/in/giovanni-shathaia-051781227/">LinkedIn</a><span class="sep" aria-hidden="true">·</span><a href="Giovanni_Shathaia_Resume.pdf">Resume</a></p>
     <p>&copy; 2026 Giovanni Shathaia. All rights reserved. Code excerpts on this page are shown for viewing only; no license to use them is granted.</p>
   </div>
 
